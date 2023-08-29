@@ -1,0 +1,11 @@
+.time{
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+}
+
+.hour{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
