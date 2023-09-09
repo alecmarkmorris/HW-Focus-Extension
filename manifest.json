@@ -4,6 +4,7 @@
     "description": "This is a timer built to help you focus while doing homework",
     "author": "Alec Morris",
     "manifest_version": 3,
+    
     "action": {
         "default_popup": "index.html",
         "default_title": "Focus Timer"

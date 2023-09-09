@@ -7,9 +7,9 @@
     <title>Focus</title>
 </head>
 <body>
-    <h3 class="title">Enter Desired Focus Time</h3>
+    <h3 class="title" id="title">Enter Desired Focus Time</h3>
     
-    <div class="time">
+    <div id="workTime" class="time">
 
         <div class="time-child">
             <h3 class="title">Hours</h3>
@@ -28,8 +28,8 @@
      </div>
 
 
-     <h3 class="title">Enter Desired Break Time</h3>
-     <div class="time">
+     <h3 id= "breakTitle" class="title">Enter Desired Break Time</h3>
+     <div id="breakTime" class="time">
 
         <div class="time-child">
             <h3 class="title">Hours</h3>
@@ -46,9 +46,9 @@
             <input type="number" id="Seconds" name="Seconds" min="0" max="59">
         </div>
     </div>
+<script src="/script.js"></script>
 
-
-     <div class="cyclesContainer">
+     <div id = "cyclesContainer" class="cyclesContainer">
         <h3 class="title">Cycles</h3>
         <input type="number" id="cycles" name="cycles" min="0" max="100">
     </div>
@@ -57,9 +57,9 @@
 
     
      <div class="btnContainer">
-        <button type="button" class="startBtn">Start</button>
+        <button id="start" class="startBtn">Start</button>
      </div>        
                                    
 </body>
-<script src="script.js"></script>
+
 </html>
