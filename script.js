@@ -10,13 +10,27 @@ document.addEventListener("DOMContentLoaded", function() {
     var breakTitle = document.getElementById("breakTitle");
     var breakTime = document.getElementById("breakTime");
     var cyclesContainer = document.getElementById("cyclesContainer");
+    var btnContainer = document.getElementById("btnContainer");
+
+    //Buttons
+    //Start button
+    var startBtn = document.getElementById("start");
+    //Stop 
+    var stopBtn = document.createElement("button");
+    stopBtn.innerHTML = "Stop";
+    stopBtn.id = "stopBtn";
 
     //Adding event listener to the start button
     //Then calling the start Function
-    document.getElementById("start").addEventListener("click", function() {
+    startBtn.addEventListener("click", function() {
         start();
     });
 
+    //Adding event listener to the stop button
+    //Then calling the stop Function
+    stopBtn.addEventListener("click", function() {
+        stop();
+    });
 
 
     //Function removes all titles and text boxes 
@@ -27,6 +41,22 @@ document.addEventListener("DOMContentLoaded", function() {
       breakTitle.remove();
       breakTime.remove();
       cyclesContainer.remove();
+      startBtn.remove();
+
+      btnContainer.appendChild(stopBtn);
+    }
+
+
+    function stop() {
+        stopBtn.remove();
+        btnContainer.remove();
+        document.body.append(title);
+        document.body.append(workTime);
+        document.body.append(breakTitle);
+        document.body.append(breakTime);
+        document.body.append(cyclesContainer);
+        document.body.append(btnContainer);
+        btnContainer.appendChild(startBtn);
     }
   });
   
