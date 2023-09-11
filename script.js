@@ -13,7 +13,11 @@ document.addEventListener("DOMContentLoaded", function() {
     var cyclesContainer = document.getElementById("cyclesContainer");
     var btnContainer = document.getElementById("btnContainer");
     var countDown = document.createElement("p");
-     
+    
+    //Number of cycles
+    var cycleInput = document.getElementById("numOfCycles");
+    var numOfCycles = 0;
+
     //Initializing user input variables
     //Desired work time
     var workHours = document.getElementById("workHours");
@@ -27,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var breakMinutes = document.getElementById("breakMinutes");
     var breakSeconds = document.getElementById("breakSeconds");
     var breakTimeInput = [];
+    var breakTimeLeft;
 
     //Buttons
     //Start button
@@ -77,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.body.append(cyclesContainer);
         document.body.append(btnContainer);
         btnContainer.appendChild(startBtn);
+        clearInput();
     }
 
     //Function that stores all values from user input
@@ -94,22 +100,62 @@ document.addEventListener("DOMContentLoaded", function() {
         breakTimeInput.push(breakMinutes.value);
         breakTimeInput.push(breakSeconds.value);
 
-        workTimeLeft = convertTime(workTimeInput[0], workTimeInput[1], workTimeInput[2])
-        startCountdown();
+        //Number of cycles
+        numOfCycles = cycleInput.value;
+
+        //Store times as seconds
+        workTimeLeft = convertTime(workTimeInput[0], workTimeInput[1], workTimeInput[2]);
+        breakTimeLeft = convertTime(breakTimeInput[0], breakTimeInput[1], breakTimeInput[2]);
+        startWorkCountdown();
     }
 
     //Function that displays the time left for user set worktime
-    function startCountdown() {
+    function startWorkCountdown() {
+        var workCounter = workTimeLeft;
         const interval = setInterval(() => {
-        countDown.innerHTML = "Work Time Left: " +workTimeInput[0]+ ":" +workTimeInput[1]+ ":" + workTimeInput[2] + "Seconds: " + workTimeLeft;
-        workTimeLeft -=1;
-        if (workTimeLeft < 0 ) {
-            clearInterval(interval);
-            countDown.innerHTML = "Time for a break";
-          }
+            countDown.innerHTML = "Work Time Left: " + workCounter + "Cycles left:" + numOfCycles;
+            if (workCounter < 0 ) {
+                clearInterval(interval);
+                countDown.innerHTML = "Break Time";
+                startBreakCountdown();
+            }
+        workCounter -=1;
         }, 1000);
+        decreaseNumOfCycles();
       }
 
+      //function that displays the countdown 
+      function startBreakCountdown() {
+        var breakCounter = breakTimeLeft;
+        const interval = setInterval(() => {
+            countDown.innerHTML = "Break Time Left: " + breakCounter + "Cycles left:" + numOfCycles;
+            if (breakCounter < 0 ) {
+                clearInterval(interval);
+                countDown.innerHTML = "work Time";
+                startWorkCountdown();
+             }
+        breakCounter -= 1;
+        }, 1000);
+        numOfCycles--;
+      }
+
+    //Function that clears all input boxes
+    function clearInput(){
+        workHours.value= "";
+        workMinutes.value= "";
+        workSeconds.value= "";
+        breakHours.value= "";
+        breakMinutes.value= "";
+        breakSeconds.value= "";
+        cycleInput.value= "";
+    }
+
+    //Function that decreases the numOfCycles variable
+    function decreaseNumOfCycles() {
+        if (numOfCycles == 0){
+            stop();
+        }
+    }
 
     //Function that takes in hours, minutes, and seconds
     //and converts them to seconds
@@ -118,4 +164,5 @@ document.addEventListener("DOMContentLoaded", function() {
         return timeInSeconds;
     }
   });
-  
+
+
