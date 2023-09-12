@@ -1,3 +1,7 @@
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>{
+    console.log(message);   
+    return true
+});
 //Loads the JavaScript file after the HTML
 document.addEventListener("DOMContentLoaded", function() {
     
@@ -107,6 +111,7 @@ document.addEventListener("DOMContentLoaded", function() {
         workTimeLeft = convertTime(workTimeInput[0], workTimeInput[1], workTimeInput[2]);
         breakTimeLeft = convertTime(breakTimeInput[0], breakTimeInput[1], breakTimeInput[2]);
         startWorkCountdown();
+        chrome.runtime.sendMessage({workTimeLeft,breakTimeLeft,numOfCycles});
     }
 
     //Function that displays the time left for user set worktime
@@ -164,5 +169,4 @@ document.addEventListener("DOMContentLoaded", function() {
         return timeInSeconds;
     }
   });
-
 
