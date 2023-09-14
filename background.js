@@ -49,6 +49,6 @@ function startBreakCountdown() {
     data[2] -= 1;
     }else
         console.log("Cycles are complete");
-        chrome.action.setIcon({ path: "/timer.png" });  
+
   }
 
