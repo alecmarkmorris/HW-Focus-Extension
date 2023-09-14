@@ -1,7 +1,3 @@
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) =>{
-    console.log(message);   
-    return true
-});
 //Loads the JavaScript file after the HTML
 document.addEventListener("DOMContentLoaded", function() {
     
@@ -92,24 +88,13 @@ document.addEventListener("DOMContentLoaded", function() {
     //Function that stores all values from user input
     //Such as Worktime, Breaktime, and Number of Cycles
     function storeValues() {
-        //Work input
-        workTimeInput = [];
-        workTimeInput.push(workHours.value);
-        workTimeInput.push(workMinutes.value);
-        workTimeInput.push(workSeconds.value);
-
-        //Break input
-        breakTimeInput = [];
-        breakTimeInput.push(breakHours.value);
-        breakTimeInput.push(breakMinutes.value);
-        breakTimeInput.push(breakSeconds.value);
-
+        
         //Number of cycles
         numOfCycles = cycleInput.value;
 
         //Store times as seconds
-        workTimeLeft = convertTime(workTimeInput[0], workTimeInput[1], workTimeInput[2]);
-        breakTimeLeft = convertTime(breakTimeInput[0], breakTimeInput[1], breakTimeInput[2]);
+        workTimeLeft = convertTime(workHours.value, workMinutes.value, workSeconds.value);
+        breakTimeLeft = convertTime(breakHours.value, breakMinutes.value, breakSeconds.value);
         startWorkCountdown();
         chrome.runtime.sendMessage({workTimeLeft,breakTimeLeft,numOfCycles});
     }

@@ -5,6 +5,9 @@
     "author": "Alec Morris",
     "manifest_version": 3,
     "action": {
+      "default_icon":{
+        "16": "/timer.png"
+      },
         "default_popup": "index.html",
         "default_title": "Focus Timer"
     },
@@ -12,5 +15,11 @@
       "offline_enabled": true,
       "background": {
         "service_worker": "background.js"
-      }
+      },
+      "content_scripts": [
+        {
+          "matches": ["<all_urls>"],
+          "js": ["script.js"]
+        }
+      ]
 }
