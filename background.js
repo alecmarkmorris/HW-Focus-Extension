@@ -76,7 +76,7 @@ function startBreakCountdown() {
             console.log("Break Time Left: " + breakCounter + "Cycles left:" + data[2]);
 
             //Changes the badge text to the time left
-            setBadgeText(breakCounter/60);
+            setBadgeText(breakCounter);
 
             //If the breakCounter reaches 0, clear the interval and start the work counter
             if (breakCounter == 0) {
@@ -101,9 +101,9 @@ function startBreakCountdown() {
   //Based upon the ID
   function setIcon(iconId){
         if(iconId == "work"){
-            chrome.action.setIcon({ path: "/images/work.png" })
+            chrome.action.setIcon({ path:"/images/workIcon.png" })
         } else if(iconId == "break"){
-            chrome.action.setIcon({ path: "/images/break.png" })
+            chrome.action.setIcon({ path: "/images/breakIcon.png" })
         } else{
             chrome.action.setIcon({ path: "/images/timer.png" })
             chrome.action.setBadgeText({text: ""});
@@ -113,10 +113,16 @@ function startBreakCountdown() {
   //Sets the badge text
   function setBadgeText(timeLeft){
 
+    //If the time left is greater than 60, 
+    //Divide the time left by 60 and 
+    //add a : to the end of the time left
+    //This is to display the time in minutes and seconds instead of seconds only
     if(timeLeft > 60){
             timeLeft = Math.floor(timeLeft/60) + ":" + (timeLeft % 60);
 
-        }
+    }
+
+    
     
     chrome.action.setBadgeText({text: timeLeft.toString()});
   }
