@@ -1,54 +1,126 @@
 
+//Initializing the array to store data
 var data = [];
 
-chrome.runtime.onMessage.addListener((message,sender,sendResponse) =>{
-    storeData(message.workTimeLeft,message.breakTimeLeft,message.numOfCycles); 
-    return true;  
-})
+    //Event listener that is called when the start button is pressed
+    chrome.runtime.onMessage.addListener((message,sender,sendResponse) =>{
+        //Clearring data array
+        data = [];
 
-function storeData(workTimeLeft, breakTimeLeft, numOfCycles){
-    //Storing all data from message in the data array
-    data.push(workTimeLeft);
-    data.push(breakTimeLeft);
-    data.push(numOfCycles);
-    console.log(data);
-    startWorkCountdown();  
-}
+        //Storing values in data including 
+        // workTimeLeft, breakTimeLeft, and numOfCycles
+        data.push(message.workTimeLeft);
+        data.push(message.breakTimeLeft);
+        data.push(message.numOfCycles);
 
-//Function that logs the time left for user set worktime
-function startWorkCountdown() {
+        //Logging the data array to the console
+        console.log(data);
 
-    chrome.action.setIcon({ path: "/work.png" });
-    var workCounter = data[0];
-    const interval = setInterval(() => {
-        console.log("Work Time Left: " + workCounter + "Cycles left:" + data[2]);
-        if (workCounter == 0 ) {
-            clearInterval(interval);
-            console.log("Break Time");
-            startBreakCountdown();
-        }
-    workCounter -=1;
-    }, 1000);
-    return 0;
-}
+        console.log("This data is: " + typeof(data[0]));
+        //Starting the timer
+        startWorkCountdown();
+    })
+
+
+    //Function that logs the time left for user set worktime
+    function startWorkCountdown() {
+        console.log( "work Time");
+        
+        //Temp Counter for desired work time
+        var workCounter = data[0];
+        
+        //Call the SetIcon function to change the icon
+        setIcon("work");
+
+        //Interval that runs every second
+        const interval = setInterval(() => {
+                
+                //Logs how much time is left + cycles left
+                console.log("Work Time Left: " + workCounter + "Cycles left:" + data[2]);
+
+                //Changes the badge text to the time left
+                setBadgeText(workCounter);
+
+                //If the counter reaches 0, clear the interval and log break time
+                //And start the break countdown
+                if (workCounter == 0 ) {
+                    clearInterval(interval);
+                    startBreakCountdown();
+                }
+
+            //decrease the temp value
+            workCounter -=1;
+        }, 1000);
+    }
 
 //Function that logs the time left for user set breaktime
 function startBreakCountdown() {
-    chrome.action.setIcon({ path: "/break.png" });
-    var breakCounter = data[1];
-    if(data[2] >0 ){
-        const interval = setInterval(() => {
-        console.log("Break Time Left: " + breakCounter + "Cycles left:" + data[2]);
-        if (breakCounter == 0 ) {
-            clearInterval(interval);
-            console.log( "work Time");
-            startWorkCountdown();
-         }
-    breakCounter -= 1;
-    }, 1000);
-    data[2] -= 1;
-    }else
-        console.log("Cycles are complete");
+    console.log("Break Time");
 
+    //Temp counter for desired break time
+    var breakCounter = data[1];
+    
+    //Call the setIcon function to change the icon
+    setIcon("break");
+
+    
+
+    //If cycle counter is greater than 0 
+    //Run the breakdown counter
+    if (data[2] > 0) {
+
+        //Interval that runs every second
+        const interval = setInterval(() => {
+
+            //Logging where the breakConter is at
+            console.log("Break Time Left: " + breakCounter + "Cycles left:" + data[2]);
+
+            //Changes the badge text to the time left
+            setBadgeText(breakCounter/60);
+
+            //If the breakCounter reaches 0, clear the interval and start the work counter
+            if (breakCounter == 0) {
+                clearInterval(interval);
+                startWorkCountdown();
+            }
+            //decrease the temp value
+            breakCounter -= 1;
+        }, 1000);
+        data[2] -= 1;
+
+    //If the number of cycles is 0, log that the cycles are complete
+    //Set icon back to original timer icon
+    } else if (data[2] == 0) {
+        console.log("Cycles are complete");
+        setIcon("timer");
+    }
+}
+
+
+  //Sets chrome extension icon
+  //Based upon the ID
+  function setIcon(iconId){
+        if(iconId == "work"){
+            chrome.action.setIcon({ path: "/images/work.png" })
+        } else if(iconId == "break"){
+            chrome.action.setIcon({ path: "/images/break.png" })
+        } else{
+            chrome.action.setIcon({ path: "/images/timer.png" })
+            chrome.action.setBadgeText({text: ""});
+        }
   }
+
+  //Sets the badge text
+  function setBadgeText(timeLeft){
+
+    if(timeLeft > 60){
+            timeLeft = Math.floor(timeLeft/60) + ":" + (timeLeft % 60);
+
+        }
+    
+    chrome.action.setBadgeText({text: timeLeft.toString()});
+  }
+  
+
+console.log("background.js is running");
 

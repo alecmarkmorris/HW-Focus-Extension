@@ -6,7 +6,7 @@
     "manifest_version": 3,
     "action": {
       "default_icon":{
-        "16": "/timer.png"
+        "16": "/images/timer.png"
       },
         "default_popup": "index.html",
         "default_title": "Focus Timer"
