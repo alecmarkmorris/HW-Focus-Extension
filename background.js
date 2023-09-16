@@ -101,9 +101,9 @@ function startBreakCountdown() {
   //Based upon the ID
   function setIcon(iconId){
         if(iconId == "work"){
-            chrome.action.setIcon({ path:"/images/workIcon.png" })
+            chrome.action.setIcon({ path:"/images/breakIcon.png" })
         } else if(iconId == "break"){
-            chrome.action.setIcon({ path: "/images/breakIcon.png" })
+            chrome.action.setIcon({ path: "/images/workIcon.png" })
         } else{
             chrome.action.setIcon({ path: "/images/timer.png" })
             chrome.action.setBadgeText({text: ""});
@@ -122,8 +122,6 @@ function startBreakCountdown() {
 
     }
 
-    
-    
     chrome.action.setBadgeText({text: timeLeft.toString()});
   }
   
