@@ -150,7 +150,12 @@ document.addEventListener("DOMContentLoaded", function() {
     //Function that takes in hours, minutes, and seconds
     //and converts them to seconds
     function convertTime(hours, minutes, seconds) {
-        var timeInSeconds = (hours * 60 * 60) + (minutes * 60) + seconds;
+
+        var hours = hours * 60 * 60;
+
+        var minutes = minutes * 60;
+        var seconds = seconds;
+        var timeInSeconds = hours + minutes + seconds;
         return timeInSeconds;
     }
   });
