@@ -1,130 +1,334 @@
+//Enhanced Background Script for Focus Timer
+let timerData = {
+    workTimeLeft: 0,
+    breakTimeLeft: 0,
+    numOfCycles: 0,
+    currentSession: 'work',
+    isRunning: false,
+    currentCycle: 1,
+    totalCycles: 4,
+    totalWorkTime: 0,
+    totalBreakTime: 0,
+    timeLeft: 0
+};
 
-//Initializing the array to store data
-var data = [];
+let timerInterval = null;
 
-    //Event listener that is called when the start button is pressed
-    chrome.runtime.onMessage.addListener((message,sender,sendResponse) =>{
-        //Clearring data array
-        data = [];
-
-        //Storing values in data including 
-        // workTimeLeft, breakTimeLeft, and numOfCycles
-        data.push(message.workTimeLeft);
-        data.push(message.breakTimeLeft);
-        data.push(message.numOfCycles);
-
-        //Logging the data array to the console
-        console.log(data);
-
-        console.log("This data is: " + typeof(data[0]));
-        //Starting the timer
-        startWorkCountdown();
-    })
-
-
-    //Function that logs the time left for user set worktime
-    function startWorkCountdown() {
-        console.log( "work Time");
-        
-        //Temp Counter for desired work time
-        var workCounter = data[0];
-        
-        //Call the SetIcon function to change the icon
-        setIcon("work");
-
-        //Interval that runs every second
-        const interval = setInterval(() => {
-                
-                //Logs how much time is left + cycles left
-                console.log("Work Time Left: " + workCounter + "Cycles left:" + data[2]);
-
-                //Changes the badge text to the time left
-                setBadgeText(workCounter);
-
-                //If the counter reaches 0, clear the interval and log break time
-                //And start the break countdown
-                if (workCounter == 0 ) {
-                    clearInterval(interval);
-                    startBreakCountdown();
-                }
-
-            //decrease the temp value
-            workCounter -=1;
-        }, 1000);
+// Event listener for messages from popup
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    console.log("Received message:", message);
+    
+    if (message.action === 'stopTimer') {
+        stopTimer();
+        sendResponse({success: true});
+        return;
     }
-
-//Function that logs the time left for user set breaktime
-function startBreakCountdown() {
-    console.log("Break Time");
-
-    //Temp counter for desired break time
-    var breakCounter = data[1];
     
-    //Call the setIcon function to change the icon
-    setIcon("break");
-
+    if (message.action === 'getSessionState') {
+        sendResponse({
+            isRunning: timerData.isRunning,
+            currentSession: timerData.currentSession,
+            currentCycle: timerData.currentCycle,
+            totalCycles: timerData.totalCycles,
+            timeLeft: timerData.timeLeft,
+            totalWorkTime: timerData.totalWorkTime,
+            totalBreakTime: timerData.totalBreakTime
+        });
+        return;
+    }
     
+    if (message.action === 'startTimer') {
+        // Store timer configuration
+        timerData.workTimeLeft = message.workTimeLeft;
+        timerData.breakTimeLeft = message.breakTimeLeft;
+        timerData.numOfCycles = message.numOfCycles;
+        timerData.totalCycles = message.numOfCycles;
+        timerData.totalWorkTime = message.workTimeLeft;
+        timerData.totalBreakTime = message.breakTimeLeft;
+        timerData.currentSession = 'work';
+        timerData.currentCycle = 1;
+        timerData.isRunning = true;
+        timerData.timeLeft = message.workTimeLeft;
+        
+        console.log("Timer data stored:", timerData);
+        
+        // Start the background timer
+        startBackgroundTimer();
+        sendResponse({success: true});
+        return;
+    }
+    
+    // Legacy support for old message format
+    if (!message.action) {
+        timerData.workTimeLeft = message.workTimeLeft;
+        timerData.breakTimeLeft = message.breakTimeLeft;
+        timerData.numOfCycles = message.numOfCycles;
+        timerData.totalCycles = message.numOfCycles;
+        timerData.totalWorkTime = message.workTimeLeft;
+        timerData.totalBreakTime = message.breakTimeLeft;
+        timerData.currentSession = 'work';
+        timerData.currentCycle = 1;
+        timerData.isRunning = true;
+        timerData.timeLeft = message.workTimeLeft;
+        
+        startBackgroundTimer();
+    }
+});
 
-    //If cycle counter is greater than 0 
-    //Run the breakdown counter
-    if (data[2] > 0) {
+function applySessionVisuals(sessionType) {
+    console.log(`Applying ${sessionType} visuals to all tabs`);
+    
+    // Store session state for content scripts
+    chrome.storage.local.set({
+        focusTimerSession: {
+            type: sessionType,
+            isActive: true,
+            timestamp: Date.now()
+        }
+    });
+    
+    // Send message to all tabs to apply visual changes
+    chrome.tabs.query({}, (tabs) => {
+        tabs.forEach(tab => {
+            chrome.tabs.sendMessage(tab.id, {
+                action: 'applySessionTheme',
+                sessionType: sessionType
+            }).catch(() => {
+                // Ignore errors for tabs that can't receive messages
+            });
+        });
+    });
+}
 
-        //Interval that runs every second
-        const interval = setInterval(() => {
+function removeSessionVisuals() {
+    console.log("Removing session visuals from all tabs");
+    
+    // Clear session state
+    chrome.storage.local.remove('focusTimerSession');
+    
+    // Send message to all tabs to remove visual changes
+    chrome.tabs.query({}, (tabs) => {
+        tabs.forEach(tab => {
+            chrome.tabs.sendMessage(tab.id, {
+                action: 'removeSessionTheme'
+            }).catch(() => {
+                // Ignore errors for tabs that can't receive messages
+            });
+        });
+    });
+}
 
-            //Logging where the breakConter is at
-            console.log("Break Time Left: " + breakCounter + "Cycles left:" + data[2]);
-
-            //Changes the badge text to the time left
-            setBadgeText(breakCounter);
-
-            //If the breakCounter reaches 0, clear the interval and start the work counter
-            if (breakCounter == 0) {
-                clearInterval(interval);
-                startWorkCountdown();
+function startBackgroundTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    let workCounter = timerData.workTimeLeft;
+    let breakCounter = timerData.breakTimeLeft;
+    let cyclesLeft = timerData.numOfCycles;
+    let isWorkSession = true;
+    
+    // Set initial icon, badge, and visuals
+    setIcon("work");
+    setBadgeText(workCounter);
+    timerData.currentSession = 'work';
+    applySessionVisuals('focus'); // Apply focus visuals
+    
+    timerInterval = setInterval(() => {
+        if (isWorkSession) {
+            console.log("Work Time Left:", workCounter, "Cycles left:", cyclesLeft);
+            setBadgeText(workCounter);
+            timerData.timeLeft = workCounter;
+            timerData.currentSession = 'work';
+            
+            if (workCounter <= 0) {
+                // Work session complete
+                showNotification("Focus session complete! Time for a break.", "work_complete");
+                
+                if (timerData.breakTimeLeft > 0) {
+                    // Switch to break
+                    isWorkSession = false;
+                    breakCounter = timerData.breakTimeLeft;
+                    setIcon("break");
+                    timerData.currentSession = 'break';
+                    applySessionVisuals('break'); // Apply break visuals
+                } else {
+                    // No break, go to next cycle
+                    cyclesLeft--;
+                    timerData.currentCycle++;
+                    if (cyclesLeft > 0) {
+                        workCounter = timerData.workTimeLeft;
+                        setIcon("work");
+                        timerData.currentSession = 'work';
+                        applySessionVisuals('focus'); // Keep focus visuals
+                    } else {
+                        completeAllCycles();
+                        return;
+                    }
+                }
+            } else {
+                workCounter--;
             }
-            //decrease the temp value
-            breakCounter -= 1;
-        }, 1000);
-        data[2] -= 1;
+        } else {
+            // Break session
+            console.log("Break Time Left:", breakCounter, "Cycles left:", cyclesLeft);
+            setBadgeText(breakCounter);
+            timerData.timeLeft = breakCounter;
+            timerData.currentSession = 'break';
+            
+            if (breakCounter <= 0) {
+                // Break complete
+                showNotification("Break complete! Ready to focus again?", "break_complete");
+                
+                cyclesLeft--;
+                timerData.currentCycle++;
+                if (cyclesLeft > 0) {
+                    // Start next work session
+                    isWorkSession = true;
+                    workCounter = timerData.workTimeLeft;
+                    setIcon("work");
+                    timerData.currentSession = 'work';
+                    applySessionVisuals('focus'); // Apply focus visuals
+                } else {
+                    completeAllCycles();
+                    return;
+                }
+            } else {
+                breakCounter--;
+            }
+        }
+    }, 1000);
+}
 
-    //If the number of cycles is 0, log that the cycles are complete
-    //Set icon back to original timer icon
-    } else if (data[2] == 0) {
-        console.log("Cycles are complete");
-        setIcon("timer");
+function completeAllCycles() {
+    console.log("All cycles complete!");
+    showNotification(`🎉 All ${timerData.totalCycles} cycles complete! Great work!`, "all_complete");
+    stopTimer();
+}
+
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    
+    // Reset timer data
+    timerData.isRunning = false;
+    timerData.currentCycle = 1;
+    timerData.timeLeft = 0;
+    timerData.currentSession = 'work';
+    
+    // Remove session visuals
+    removeSessionVisuals();
+    
+    setIcon("timer");
+    chrome.action.setBadgeText({text: ""});
+    console.log("Timer stopped and visuals removed");
+}
+
+// Enhanced icon management
+function setIcon(iconId) {
+    const iconPaths = {
+        work: "/images/workIcon.png",
+        break: "/images/breakIcon.png", 
+        timer: "/images/timer.png"
+    };
+    
+    const iconPath = iconPaths[iconId] || iconPaths.timer;
+    
+    chrome.action.setIcon({ path: iconPath }, () => {
+        if (chrome.runtime.lastError) {
+            console.error("Error setting icon:", chrome.runtime.lastError);
+        }
+    });
+    
+    // Clear badge if returning to timer icon
+    if (iconId === "timer") {
+        chrome.action.setBadgeText({text: ""});
     }
 }
 
-
-  //Sets chrome extension icon
-  //Based upon the ID
-  function setIcon(iconId){
-        if(iconId == "work"){
-            chrome.action.setIcon({ path:"/images/breakIcon.png" })
-        } else if(iconId == "break"){
-            chrome.action.setIcon({ path: "/images/workIcon.png" })
-        } else{
-            chrome.action.setIcon({ path: "/images/timer.png" })
-            chrome.action.setBadgeText({text: ""});
-        }
-  }
-
-  //Sets the badge text
-  function setBadgeText(timeLeft){
-
-    //If the time left is greater than 60, 
-    //Divide the time left by 60 and 
-    //add a : to the end of the time left
-    //This is to display the time in minutes and seconds instead of seconds only
-    if(timeLeft > 60){
-            timeLeft = Math.floor(timeLeft/60) + ":" + (timeLeft % 60);
-
+// Enhanced badge text with better formatting
+function setBadgeText(timeLeft) {
+    let displayTime;
+    
+    if (timeLeft <= 0) {
+        displayTime = "0";
+    } else if (timeLeft >= 3600) {
+        // Show hours for long timers
+        const hours = Math.floor(timeLeft / 3600);
+        displayTime = `${hours}h`;
+    } else if (timeLeft >= 60) {
+        // Show minutes:seconds for medium timers
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        displayTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+        // Show just seconds for short timers
+        displayTime = timeLeft.toString();
     }
+    
+    chrome.action.setBadgeText({text: displayTime});
+    
+    // Set badge color based on session type
+    const badgeColor = timerData.currentSession === 'work' ? '#ff6b6b' : '#4facfe';
+    chrome.action.setBadgeBackgroundColor({color: badgeColor});
+}
 
-    chrome.action.setBadgeText({text: timeLeft.toString()});
-  }
-  
+// Enhanced notification system
+function showNotification(message, type) {
+    const notificationOptions = {
+        type: 'basic',
+        iconUrl: '/images/timer.png',
+        title: 'Focus Timer',
+        message: message
+    };
+    
+    // Customize based on notification type
+    switch(type) {
+        case 'work_complete':
+            notificationOptions.iconUrl = '/images/breakIcon.png';
+            break;
+        case 'break_complete':
+            notificationOptions.iconUrl = '/images/workIcon.png';
+            break;
+        case 'all_complete':
+            notificationOptions.title = '🎉 Focus Timer - Session Complete!';
+            break;
+    }
+    
+    chrome.notifications.create('focusTimer_' + Date.now(), notificationOptions, (notificationId) => {
+        if (chrome.runtime.lastError) {
+            console.error("Error creating notification:", chrome.runtime.lastError);
+        } else {
+            console.log("Notification created:", notificationId);
+            
+            // Auto-clear notification after 5 seconds
+            setTimeout(() => {
+                chrome.notifications.clear(notificationId);
+            }, 5000);
+        }
+    });
+}
 
-console.log("background.js is running");
+// Handle notification clicks
+chrome.notifications.onClicked.addListener((notificationId) => {
+    // Open the extension popup when notification is clicked
+    chrome.action.openPopup();
+    chrome.notifications.clear(notificationId);
+});
+
+// Initialize on extension startup
+chrome.runtime.onStartup.addListener(() => {
+    console.log("Focus Timer extension started");
+    setIcon("timer");
+});
+
+// Initialize on extension install
+chrome.runtime.onInstalled.addListener(() => {
+    console.log("Focus Timer extension installed/updated");
+    setIcon("timer");
+});
+
+console.log("Enhanced background.js is running");
 

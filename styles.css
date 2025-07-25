@@ -1,38 +1,306 @@
-.time{
-    display: flex;
-    justify-content: space-evenly;
-    flex-direction: row;
-    padding: 0px;
-    margin: 0px;
-    border: 0px;
+/* ===== Modern Pomodoro Timer Styling ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.time-child{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0px;
-    margin-bottom: 20px;
-    border: 0px;
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    width: 320px;
+    min-height: 400px;
+    padding: 20px;
+    overflow-x: hidden;
 }
 
-.title{
-    padding: 0px;
-    margin: 0px;
-    border: 0px;
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.title {
+    font-weight: 600;
+    font-size: 18px;
+    color: #2d3748;
+    margin-bottom: 16px;
     text-align: center;
 }
 
-.btnContainer{
+.subtitle {
+    font-weight: 400;
+    font-size: 14px;
+    color: #4a5568;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+/* Preset Buttons */
+.presets {
     display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
-.cyclesContainer{
-    padding: 0px;
-    margin: 0px;
-    border: 0px;
-    justify-content: center;
+.preset-btn {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+}
+
+.preset-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(79, 172, 254, 0.4);
+}
+
+/* Time Input Section */
+.time {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.time-child {
+    flex: 1;
+    text-align: center;
+}
+
+.time-child h3 {
+    font-size: 12px;
+    font-weight: 500;
+    color: #718096;
+    margin-bottom: 8px;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 12px 8px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+    background: #f7fafc;
+    transition: all 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: #4facfe;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+}
+
+/* Cycles Section */
+.cyclesContainer {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.cyclesContainer h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a5568;
+    margin-bottom: 8px;
+}
+
+#numOfCycles {
+    width: 80px;
+    margin: 0 auto;
+}
+
+/* Button Container */
+.btnContainer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.startBtn, #stopBtn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 14px 32px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    min-width: 120px;
+}
+
+.startBtn:hover, #stopBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
+}
+
+.startBtn:active, #stopBtn:active {
+    transform: translateY(0);
+}
+
+/* Timer Display */
+.countdown {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.timer-circle {
+    width: 120px;
+    height: 120px;
+    margin: 20px auto;
+    position: relative;
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 0.5s ease-in-out;
+    fill: transparent;
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+
+.timer-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Theme States */
+.focusTheme {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+}
+
+.focusTheme .container {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid rgba(255, 107, 107, 0.3);
+}
+
+.focusTheme .countdown {
+    color: #ee5a24;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.focusTheme .progress-ring-circle {
+    stroke: #ff6b6b;
+}
+
+.breakTheme {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.breakTheme .container {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid rgba(79, 172, 254, 0.3);
+}
+
+.breakTheme .countdown {
+    color: #00a8ff;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.breakTheme .progress-ring-circle {
+    stroke: #4facfe;
+}
+
+/* Status Indicators */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: rgba(79, 172, 254, 0.1);
+    border-radius: 12px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4facfe;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 350px) {
+    body {
+        width: 280px;
+        padding: 16px;
+    }
+    
+    .container {
+        padding: 20px;
+    }
 }

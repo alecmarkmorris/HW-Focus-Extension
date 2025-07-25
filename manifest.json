@@ -1,25 +1,33 @@
 {
-    "name": "Pomodoro Timer",
-    "version": "1.0.1",
-    "description": "This is a timer built to help you focus while doing homework using the Pomodoro study technique.",
+    "name": "Focus Timer - Pomodoro Technique",
+    "version": "2.0.0",
+    "description": "Beautiful Pomodoro timer with visual themes, preset timers, progress tracking, and notifications to boost productivity.",
     "author": "Alec Morris",
     "manifest_version": 3,
     "action": {
       "default_icon":{
-        "16": "/images/timer.png"
+        "16": "/images/timer.png",
+        "48": "/images/timer.png",
+        "128": "/images/timer.png"
       },
         "default_popup": "index.html",
-        "default_title": "Pomodoro Timer"
+        "default_title": "Focus Timer - Pomodoro Technique"
     },
-    "permissions": ["activeTab"],
-      "offline_enabled": true,
-      "background": {
+    "permissions": ["activeTab", "notifications", "storage"],
+    "offline_enabled": true,
+    "background": {
         "service_worker": "background.js"
-      },
-      "content_scripts": [
+    },
+    "content_scripts": [
         {
           "matches": ["<all_urls>"],
-          "js": ["script.js"]
+          "js": ["content-script.js"],
+          "run_at": "document_start"
         }
-      ]
+    ],
+    "icons": {
+        "16": "/images/timer.png",
+        "48": "/images/timer.png",
+        "128": "/images/timer.png"
+    }
 }

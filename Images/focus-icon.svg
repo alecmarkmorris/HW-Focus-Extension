@@ -1,0 +1,40 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="focusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ee5a24;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <dropShadow dx="2" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="58" fill="url(#focusGradient)" filter="url(#shadow)"/>
+  
+  <!-- Inner circle for depth -->
+  <circle cx="64" cy="64" r="48" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  
+  <!-- Target/Focus rings -->
+  <circle cx="64" cy="64" r="35" fill="none" stroke="white" stroke-width="3" opacity="0.9"/>
+  <circle cx="64" cy="64" r="25" fill="none" stroke="white" stroke-width="2.5" opacity="0.8"/>
+  <circle cx="64" cy="64" r="15" fill="none" stroke="white" stroke-width="2" opacity="0.7"/>
+  
+  <!-- Central focus dot -->
+  <circle cx="64" cy="64" r="6" fill="white"/>
+  
+  <!-- Brain/focus rays -->
+  <g stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.6">
+    <line x1="64" y1="20" x2="64" y2="30" />
+    <line x1="64" y1="98" x2="64" y2="108" />
+    <line x1="20" y1="64" x2="30" y2="64" />
+    <line x1="98" y1="64" x2="108" y2="64" />
+    <line x1="35.8" y1="35.8" x2="42.2" y2="42.2" />
+    <line x1="85.8" y1="85.8" x2="92.2" y2="92.2" />
+    <line x1="92.2" y1="35.8" x2="85.8" y2="42.2" />
+    <line x1="42.2" y1="85.8" x2="35.8" y2="92.2" />
+  </g>
+  
+  <!-- Subtle highlight -->
+  <ellipse cx="52" cy="48" rx="8" ry="12" fill="rgba(255,255,255,0.3)" transform="rotate(-30 52 48)"/>
+</svg> 

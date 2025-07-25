@@ -2,63 +2,98 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="styles.css">
+    <!-- Google Font for cleaner look -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus</title>
+    <title>Focus Timer</title>
 </head>
 <body>
-    <h3 class="title" id="title">Enter Desired Focus Time</h3>
-    
-    <div id="workTime" class="time">
-
-        <div class="time-child">
-            <h3 class="title">Hours</h3>
-            <input type="number" id="workHours" name="hours" min="0" max="24">
+    <div class="container">
+        <!-- Header -->
+        <h1 class="title" id="title">🍅 Focus Timer</h1>
+        
+        <!-- Quick Presets -->
+        <div id="presets" class="presets">
+            <button class="preset-btn" data-work="25" data-break="5" data-cycles="4">25/5 Classic</button>
+            <button class="preset-btn" data-work="50" data-break="10" data-cycles="3">50/10 Extended</button>
+            <button class="preset-btn" data-work="15" data-break="3" data-cycles="6">15/3 Quick</button>
         </div>
 
-        <div class="time-child">
-            <h3 class="title">Minutes</h3>
-            <input type="number" id="workMinutes" name="minutes" min="0" max="59">
+        <!-- Status Bar -->
+        <div id="statusBar" class="status-bar" style="display: none;">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span id="sessionType">Focus Session</span>
+            </div>
+            <div class="status-indicator">
+                <span id="cycleProgress">Cycle 1/4</span>
+            </div>
         </div>
 
-        <div class="time-child">
-            <h3 class="title">Seconds</h3>
-            <input type="number" id="workSeconds" name="Seconds" min="0" max="59">
+        <!-- Timer Circle -->
+        <div id="timerCircle" class="timer-circle" style="display: none;">
+            <svg class="progress-ring" width="120" height="120">
+                <circle class="progress-ring-circle" stroke="#4facfe" cx="60" cy="60" r="45"></circle>
+            </svg>
+            <div class="timer-text" id="timerText">25:00</div>
         </div>
-     </div>
-
-     
-     <h3 id= "breakTitle" class="title">Enter Desired Break Time</h3>
-     <div id="breakTime" class="time">
-
-        <div class="time-child">
-            <h3 class="title">Hours</h3>
-            <input type="number" id="breakHours" name="hours" min="0" max="24">
+        
+        <!-- Work Time Section -->
+        <div id="workTimeSection">
+            <h3 class="subtitle">Focus Time</h3>
+            <div id="workTime" class="time">
+                <div class="time-child">
+                    <h3>Hours</h3>
+                    <input type="number" id="workHours" name="hours" min="0" max="24" value="0">
+                </div>
+                <div class="time-child">
+                    <h3>Minutes</h3>
+                    <input type="number" id="workMinutes" name="minutes" min="0" max="59" value="25">
+                </div>
+                <div class="time-child">
+                    <h3>Seconds</h3>
+                    <input type="number" id="workSeconds" name="seconds" min="0" max="59" value="0">
+                </div>
+            </div>
         </div>
 
-        <div class="time-child">
-            <h3 class="title">Minutes</h3>
-            <input type="number" id="breakMinutes" name="minutes" min="0" max="59">
+        <!-- Break Time Section -->
+        <div id="breakTimeSection">
+            <h3 class="subtitle">Break Time</h3>
+            <div id="breakTime" class="time">
+                <div class="time-child">
+                    <h3>Hours</h3>
+                    <input type="number" id="breakHours" name="hours" min="0" max="24" value="0">
+                </div>
+                <div class="time-child">
+                    <h3>Minutes</h3>
+                    <input type="number" id="breakMinutes" name="minutes" min="0" max="59" value="5">
+                </div>
+                <div class="time-child">
+                    <h3>Seconds</h3>
+                    <input type="number" id="breakSeconds" name="seconds" min="0" max="59" value="0">
+                </div>
+            </div>
         </div>
 
-        <div class="time-child">
-            <h3 class="title">Seconds</h3>
-            <input type="number" id="breakSeconds" name="Seconds" min="0" max="59">
+        <!-- Cycles Section -->
+        <div id="cyclesSection" class="cyclesContainer">
+            <h3>Number of Cycles</h3>
+            <input type="number" id="numOfCycles" name="cycles" min="1" max="10" value="4">
+        </div>
+
+        <!-- Control Buttons -->
+        <div id="btnContainer" class="btnContainer">
+            <button id="start" class="startBtn">Start Focus Session</button>
+        </div>
+
+        <!-- Countdown Display (hidden initially) -->
+        <div id="countdownDisplay" class="countdown slide-in" style="display: none;">
+            <div id="countdownText">Ready to focus!</div>
         </div>
     </div>
 
-
-     <div id = "cyclesContainer" class="cyclesContainer">
-        <h3 class="title">Cycles</h3>
-         <input type="number" id="numOfCycles" name="cycles" min="0" max="100">
-    </div>
-
-
-    
-     <div id = "btnContainer" class="btnContainer">
-        <button id="start" class="startBtn">Start</button>
-     </div>     
-                                   
+    <script src="/script.js"></script>
 </body>
-<script src="/script.js"></script>
 </html>
