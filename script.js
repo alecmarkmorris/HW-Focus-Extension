@@ -367,19 +367,19 @@ document.addEventListener("DOMContentLoaded", function() {
         notification.className = `notification ${type}`;
         notification.textContent = message;
         notification.style.cssText = `
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
-            color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 500;
-            z-index: 1000;
-            animation: slideIn 0.3s ease-out;
-            max-width: 250px;
-            word-wrap: break-word;
+            position: fixed !important;
+            top: 10px !important;
+            right: 10px !important;
+            background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'} !important;
+            color: white !important;
+            padding: 12px 16px !important;
+            border-radius: 8px !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            z-index: 1000 !important;
+            animation: slideIn 0.3s ease-out !important;
+            max-width: 250px !important;
+            word-wrap: break-word !important;
         `;
         
         document.body.appendChild(notification);
@@ -400,7 +400,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification('Focus Timer', {
                 body: message,
-                icon: '/images/timer.png'
+                icon: '/Images/timer.png'
             });
         }
     }
@@ -409,5 +409,5 @@ document.addEventListener("DOMContentLoaded", function() {
     if ('Notification' in window && Notification.permission === 'default') {
         Notification.requestPermission();
     }
-  });
+});
 

@@ -6,9 +6,9 @@
     "manifest_version": 3,
     "action": {
       "default_icon":{
-        "16": "/images/timer.png",
-        "48": "/images/timer.png",
-        "128": "/images/timer.png"
+        "16": "/Images/timer.png",
+        "48": "/Images/timer.png",
+        "128": "/Images/timer.png"
       },
         "default_popup": "index.html",
         "default_title": "Focus Timer - Pomodoro Technique"
@@ -26,8 +26,8 @@
         }
     ],
     "icons": {
-        "16": "/images/timer.png",
-        "48": "/images/timer.png",
-        "128": "/images/timer.png"
+        "16": "/Images/timer.png",
+        "48": "/Images/timer.png",
+        "128": "/Images/timer.png"
     }
 }

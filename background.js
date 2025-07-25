@@ -229,9 +229,9 @@ function stopTimer() {
 // Enhanced icon management
 function setIcon(iconId) {
     const iconPaths = {
-        work: "/images/workIcon.png",
-        break: "/images/breakIcon.png", 
-        timer: "/images/timer.png"
+        work: "/Images/workIcon.png",
+        break: "/Images/breakIcon.png", 
+        timer: "/Images/timer.png"
     };
     
     const iconPath = iconPaths[iconId] || iconPaths.timer;
@@ -279,7 +279,7 @@ function setBadgeText(timeLeft) {
 function showNotification(message, type) {
     const notificationOptions = {
         type: 'basic',
-        iconUrl: '/images/timer.png',
+        iconUrl: '/Images/timer.png',
         title: 'Focus Timer',
         message: message
     };
@@ -287,10 +287,10 @@ function showNotification(message, type) {
     // Customize based on notification type
     switch(type) {
         case 'work_complete':
-            notificationOptions.iconUrl = '/images/breakIcon.png';
+            notificationOptions.iconUrl = '/Images/breakIcon.png';
             break;
         case 'break_complete':
-            notificationOptions.iconUrl = '/images/workIcon.png';
+            notificationOptions.iconUrl = '/Images/workIcon.png';
             break;
         case 'all_complete':
             notificationOptions.title = '🎉 Focus Timer - Session Complete!';
